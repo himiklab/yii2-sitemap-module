@@ -9,13 +9,13 @@ The preferred way to install this extension is through [composer](http://getcomp
 * Either run
 
 ```
-php composer.phar require "himiklab/yii2-yii2-sitemap-module-module" "*"
+php composer.phar require "himiklab/yii2-sitemap-module" "*"
 ```
 
 or add
 
 ```json
-"himiklab/yii2-yii2-sitemap-module-module" : "*"
+"himiklab/yii2-sitemap-module" : "*"
 ```
 
 to the require section of your application's `composer.json` file.
