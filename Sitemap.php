@@ -31,4 +31,7 @@ class Sitemap extends Module
 
     /** @var array $models */
     public $models = [];
+
+    /** @var array $urls */
+    public $urls = [];
 }
