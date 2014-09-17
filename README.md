@@ -44,6 +44,13 @@ to the require section of your application's `composer.json` file.
             'app\modules\news\models\News',
             ...
         ],
+        'urls'=> [
+            [
+                'loc'=>'/news/index',
+                'changefreq' => SitemapBehavior::CHANGEFREQ_DAILY,
+                'priority' => 0.8
+            ],
+        ],
         'enableGzip' => true,
     ],
     ...

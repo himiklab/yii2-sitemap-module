@@ -22,7 +22,7 @@ class DefaultController extends Controller
         $module = $this->module;
 
         if (!$sitemapData = Yii::$app->cache->get($module->cacheKey)) {
-            $urls = [];
+            $urls = $module->urls;
             foreach ($module->models as $modelName) {
                 /** @var \himiklab\sitemap\behaviors\SitemapBehavior $model */
                 $model = new $modelName;
