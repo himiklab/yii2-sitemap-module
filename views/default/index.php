@@ -13,7 +13,9 @@ echo '<?xml version="1.0" encoding="UTF-8"?>' . PHP_EOL;
     <?php foreach ($urls as $url): ?>
         <url>
             <loc><?= $url['loc'] ?></loc>
-            <lastmod><?= $url['lastmod'] ?></lastmod>
+            <?php if(isset($url['lastmod'])): ?>
+                <lastmod><?= $url['lastmod'] ?></lastmod>
+            <?php endif; ?>
             <changefreq><?= $url['changefreq'] ?></changefreq>
             <priority><?= $url['priority'] ?></priority>
         </url>

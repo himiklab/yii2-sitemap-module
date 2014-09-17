@@ -81,12 +81,14 @@ class SitemapBehavior extends Behavior
                 continue;
             }
 
-            if (!isset($urlData['loc'], $urlData['lastmod'])) {
-                throw new InvalidConfigException('Params `loc` and/or `lastmod` isn`t set.');
+            if (!isset($urlData['loc'])) {
+                throw new InvalidConfigException('Params `loc` isn`t set.');
             }
 
             $result[$n]['loc'] = $urlData['loc'];
-            $result[$n]['lastmod'] = date(DATE_W3C, $urlData['lastmod']);
+            if(isset($urlData['lastmod'])) {
+                $result[$n]['lastmod'] = date(DATE_W3C, $urlData['lastmod']);
+            }
 
             $result[$n]['changefreq'] =
                 isset($urlData['changefreq']) ? $urlData['changefreq'] : $this->defaultChangefreq;
