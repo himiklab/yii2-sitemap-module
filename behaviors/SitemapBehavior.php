@@ -9,7 +9,7 @@ namespace himiklab\sitemap\behaviors;
 
 use yii\base\Behavior;
 use yii\db\ActiveRecord;
-use yii\base\InvalidConfigException;
+use yii\base\InvalidParamException;
 
 /**
  * Behavior for XML Sitemap Yii2 module.
@@ -52,16 +52,16 @@ class SitemapBehavior extends Behavior
     /** @var \Closure $dataClosure */
     public $dataClosure;
 
-    /** @var string $defaultChangefreq */
-    public $defaultChangefreq = self::CHANGEFREQ_MONTHLY;
+    /** @var string|bool $defaultChangefreq */
+    public $defaultChangefreq = false;
 
-    /** @var float $defaultPriority */
-    public $defaultPriority = 0.5;
+    /** @var float|bool $defaultPriority */
+    public $defaultPriority = false;
 
     public function init()
     {
         if (!$this->dataClosure instanceof \Closure) {
-            throw new InvalidConfigException('SitemapBehavior::$dataClosure isn`t \Closure object.');
+            throw new InvalidParamException('SitemapBehavior::$dataClosure isn`t \Closure object.');
         }
     }
 
@@ -82,18 +82,25 @@ class SitemapBehavior extends Behavior
             }
 
             if (!isset($urlData['loc'])) {
-                throw new InvalidConfigException('Params `loc` isn`t set.');
+                throw new InvalidParamException('Required param `loc` isn`t set.');
             }
 
             $result[$n]['loc'] = $urlData['loc'];
-            if(isset($urlData['lastmod'])) {
+            if (isset($urlData['lastmod'])) {
                 $result[$n]['lastmod'] = date(DATE_W3C, $urlData['lastmod']);
             }
 
-            $result[$n]['changefreq'] =
-                isset($urlData['changefreq']) ? $urlData['changefreq'] : $this->defaultChangefreq;
-            $result[$n]['priority'] =
-                isset($urlData['priority']) ? $urlData['priority'] : $this->defaultPriority;
+            if (isset($urlData['changefreq'])) {
+                $result[$n]['changefreq'] = $urlData['changefreq'];
+            } elseif ($this->defaultChangefreq !== false) {
+                $result[$n]['changefreq'] = $this->defaultChangefreq;
+            }
+
+            if (isset($urlData['priority'])) {
+                $result[$n]['priority'] = $urlData['priority'];
+            } elseif ($this->defaultPriority !== false) {
+                $result[$n]['priority'] = $this->defaultPriority;
+            }
 
             ++$n;
         }

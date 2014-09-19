@@ -13,11 +13,15 @@ echo '<?xml version="1.0" encoding="UTF-8"?>' . PHP_EOL;
     <?php foreach ($urls as $url): ?>
         <url>
             <loc><?= $url['loc'] ?></loc>
-            <?php if(isset($url['lastmod'])): ?>
+            <?php if (isset($url['lastmod'])): ?>
                 <lastmod><?= $url['lastmod'] ?></lastmod>
             <?php endif; ?>
-            <changefreq><?= $url['changefreq'] ?></changefreq>
-            <priority><?= $url['priority'] ?></priority>
+            <?php if (isset($url['changefreq'])): ?>
+                <changefreq><?= $url['changefreq'] ?></changefreq>
+            <?php endif; ?>
+            <?php if (isset($url['priority'])): ?>
+                <priority><?= $url['priority'] ?></priority>
+            <?php endif; ?>
         </url>
     <?php endforeach; ?>
 </urlset>
