@@ -2,7 +2,7 @@
 /**
  * @link https://github.com/himiklab/yii2-sitemap-module
  * @copyright Copyright (c) 2014 HimikLab
- * @license http://opensource.org/licenses/MIT
+ * @license http://opensource.org/licenses/MIT MIT
  *
  * @var array $urls
  */
