@@ -11,7 +11,7 @@ use Yii;
 use yii\base\Module;
 
 /**
- * Yii2 module for automatically generation XML Sitemap.
+ * Yii2 module for automatically generating XML Sitemap.
  *
  * @author HimikLab
  * @package himiklab\sitemap

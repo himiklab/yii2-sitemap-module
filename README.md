@@ -1,6 +1,6 @@
 XML Sitemap Module for Yii2
 ========================
-Yii2 module for automatically generation [XML Sitemap](http://www.sitemaps.org/protocol.html).
+Yii2 module for automatically generating [XML Sitemap](http://www.sitemaps.org/protocol.html).
 
 Installation
 ------------
@@ -9,7 +9,7 @@ The preferred way to install this extension is through [composer](http://getcomp
 * Either run
 
 ```
-php composer.phar require "himiklab/yii2-sitemap-module" "*"
+php composer.phar require --prefer-dist "himiklab/yii2-sitemap-module" "*"
 ```
 
 or add
@@ -18,49 +18,45 @@ or add
 "himiklab/yii2-sitemap-module" : "*"
 ```
 
-to the require section of your application's `composer.json` file.
+to the `require` section of your application's `composer.json` file.
 
 * Configure the `cache` component of your application's configuration file, for example:
 
 ```php
 'components' => [
-    ...
     'cache' => [
         'class' => 'yii\caching\FileCache',
     ],
-    ...
 ]
 ```
 
-* Add a new module in `modules` section of your application's configuration file.
+* Add a new module in `modules` section of your application's configuration file, for example:
 
 ```php
 'modules' => [
-    ...
     'sitemap' => [
         'class' => 'himiklab\sitemap\Sitemap',
         'models' => [
-            'app\modules\page\models\Page',
+            // your models
             'app\modules\news\models\News',
-            ...
         ],
         'urls'=> [
+            // your additional urls
             [
-                'loc'=>'/news/index',
-                'changefreq' => SitemapBehavior::CHANGEFREQ_DAILY,
+                'loc' => '/news/index',
+                'changefreq' => \himiklab\sitemap\behaviors\SitemapBehavior::CHANGEFREQ_DAILY,
                 'priority' => 0.8
             ],
         ],
         'enableGzip' => true,
     ],
-    ...
 ],
 ```
 
-* Add behavior in the AR models:
+* Add behavior in the AR models, for example:
 
 ```php
-use himiklab\sitemap\SitemapBehavior;
+use himiklab\sitemap\behaviors\SitemapBehavior;
 
 public function behaviors()
 {
@@ -70,7 +66,7 @@ public function behaviors()
             'dataClosure' => function ($model) {
                 /** @var self $model */
                 return [
-                    'loc' => Url::to(model->url, true),
+                    'loc' => Url::to($model->url, true),
                     'lastmod' => strtotime($model->lastmod),
                     'changefreq' => SitemapBehavior::CHANGEFREQ_DAILY,
                     'priority' => 0.8
@@ -81,14 +77,12 @@ public function behaviors()
 }
 ```
 
-* Add a new rule for `urlManager` of your application's configuration file.
+* Add a new rule for `urlManager` of your application's configuration file, for example:
 
 ```php
 'urlManager' => [
     'rules' => [
         '/<id:sitemap.xml>' => 'sitemap/default/index',
-        ...
     ],
-    ...
 ],
 ```
