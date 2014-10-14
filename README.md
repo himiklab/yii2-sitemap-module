@@ -82,7 +82,7 @@ public function behaviors()
 ```php
 'urlManager' => [
     'rules' => [
-        '/<id:sitemap.xml>' => 'sitemap/default/index',
+        ['pattern' => 'sitemap', 'route' => 'sitemap/default/index', 'suffix' => '.xml'],
     ],
 ],
 ```
