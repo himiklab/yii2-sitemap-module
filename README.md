@@ -45,10 +45,16 @@ to the `require` section of your application's `composer.json` file.
             [
                 'loc' => '/news/index',
                 'changefreq' => \himiklab\sitemap\behaviors\SitemapBehavior::CHANGEFREQ_DAILY,
-                'priority' => 0.8
+                'priority' => 0.8,
+                'images' => [
+                    [
+                        'loc' => 'full',   
+                    ],
+                ],
             ],
         ],
         'enableGzip' => true,
+        'flush' => false,  // Set flush to true to always flush cache
     ],
 ],
 ```

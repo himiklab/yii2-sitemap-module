@@ -9,7 +9,8 @@
 
 echo '<?xml version="1.0" encoding="UTF-8"?>' . PHP_EOL;
 ?>
-<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
+  xmlns:image="http://www.google.com/schemas/sitemap-image/1.1" >
     <?php foreach ($urls as $url): ?>
         <url>
             <loc><?= $url['loc'] ?></loc>
@@ -22,6 +23,19 @@ echo '<?xml version="1.0" encoding="UTF-8"?>' . PHP_EOL;
             <?php if (isset($url['priority'])): ?>
                 <priority><?= $url['priority'] ?></priority>
             <?php endif; ?>
+            <?php
+                if (isset($url['images'])) {
+                    foreach($url['images'] as $image){
+                        echo '<image:image>';
+                            echo (isset($image['loc']) ? '<image:loc>'.$image['loc'].'</image:loc>' : '');
+                            echo (isset($image['caption']) ? '<image:caption>'.$image['loc'].'</image:caption>' : '');
+                            echo (isset($image['geo_location']) ? '<image:geo_location>'.$image['geo_location'].'</image:geo_location>' : '');
+                            echo (isset($image['title']) ? '<image:title>'.$image['title'].'</image:title>' : '');
+                            echo (isset($image['license']) ? '<image:license>'.$image['license'].'</image:license>' : '');
+                        echo '</image:image>';
+                    }
+                }
+            ?>
         </url>
     <?php endforeach; ?>
 </urlset>
