@@ -23,7 +23,7 @@ class DefaultController extends Controller
         $module = $this->module;
 
         if($module->flush){
-            Yii::$app->cache->flush();
+            Yii::$app->cache->delete($module->cacheKey);
         }
 
         if (!$sitemapData = Yii::$app->cache->get($module->cacheKey)) {
@@ -51,6 +51,10 @@ class DefaultController extends Controller
         echo $sitemapData;
     }
     
+    
+    
+    
+    
     /**
      * toUrl function.
      * 
@@ -59,11 +63,12 @@ class DefaultController extends Controller
      * @param array $urls
      * @return array
      */
-    private static function toUrl($urls){
+    private static function toUrl($urls)
+    {
         $i = 0;
         
-        foreach($urls as $u){
-            $urls[$i]['loc'] = Url::to($u['loc'],true);
+        foreach ($urls as $u) {
+            $urls[$i]['loc'] = Url::to($u['loc'], true);
             $i++;
         }
         

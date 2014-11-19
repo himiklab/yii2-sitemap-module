@@ -30,7 +30,7 @@ class Sitemap extends Module
     public $enableGzip = false;
 
     /** @var boolean $flush */
-    public $fluse = false;
+    public $flush = false;
 
     /** @var array $models */
     public $models = [];
