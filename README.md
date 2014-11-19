@@ -111,6 +111,8 @@ public function behaviors()
 
 Resources
 ------------
-[XML Sitemap](http://www.sitemaps.org/protocol.html)
-[News Sitemap](https://support.google.com/news/publisher/answer/74288?hl=en)
-[Image sitemaps](https://support.google.com/webmasters/answer/178636?hl=en)
+* [XML Sitemap](http://www.sitemaps.org/protocol.html)
+
+* [News Sitemap](https://support.google.com/news/publisher/answer/74288?hl=en)
+
+* [Image sitemaps](https://support.google.com/webmasters/answer/178636?hl=en)
