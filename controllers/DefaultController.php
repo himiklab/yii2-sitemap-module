@@ -22,16 +22,15 @@ class DefaultController extends Controller
         /** @var \himiklab\sitemap\Sitemap $module */
         $module = $this->module;
 
-        if($module->flush){
+        if ($module->flush) {
             Yii::$app->cache->delete($module->cacheKey);
         }
 
         if (!$sitemapData = Yii::$app->cache->get($module->cacheKey)) {
-            
-            $urls_to_update = $module->urls;
-            $urls = $this->toUrl($urls_to_update);
-            
+            $urls = $this->toUrl($module->urls);
+
             foreach ($module->models as $modelName) {
+                /** @var \himiklab\sitemap\behaviors\SitemapBehavior $model */
                 $model = new $modelName;
                 $urls = array_merge($urls, $model->generateSiteMap());
             }
@@ -50,29 +49,21 @@ class DefaultController extends Controller
         }
         echo $sitemapData;
     }
-    
-    
-    
-    
-    
+
     /**
      * toUrl function.
-     * 
-     * @access private
-     * @static
+     *
      * @param array $urls
      * @return array
      */
-    private static function toUrl($urls)
+    protected function toUrl($urls)
     {
         $i = 0;
-        
         foreach ($urls as $u) {
             $urls[$i]['loc'] = Url::to($u['loc'], true);
             $i++;
         }
-        
+
         return $urls;
     }
-    
 }
