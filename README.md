@@ -85,6 +85,10 @@ public function behaviors()
     return [
         'sitemap' => [
             'class' => SitemapBehavior::className(),
+            'select' => [
+                'url',
+                'lastmod',
+            ],
             'dataClosure' => function ($model) {
                 /** @var self $model */
                 return [
