@@ -51,6 +51,9 @@ class SitemapBehavior extends Behavior
 
     /** @var \Closure $dataClosure */
     public $dataClosure;
+    
+    /** @var string|array $select */
+    public $select = '*';
 
     /** @var string|bool $defaultChangefreq */
     public $defaultChangefreq = false;
@@ -72,7 +75,7 @@ class SitemapBehavior extends Behavior
 
         /** @var ActiveRecord $owner */
         $owner = $this->owner;
-        $models = $owner::find()->all();
+        $models = $owner::find()->select($this->select)->all();
 
         foreach ($models as $model) {
             $urlData = call_user_func($this->dataClosure, $model);
