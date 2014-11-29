@@ -30,7 +30,7 @@ use yii\base\InvalidParamException;
  *           },
  *           'dataClosure' => function ($model) {
  *              return [
- *                  'loc' => Url::to(model->url, true),
+ *                  'loc' => Url::to($model->url, true),
  *                  'lastmod' => strtotime($model->lastmod),
  *                  'changefreq' => SitemapBehavior::CHANGEFREQ_DAILY,
  *                  'priority' => 0.8
