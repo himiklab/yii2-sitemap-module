@@ -22,6 +22,12 @@ use yii\base\InvalidParamException;
  *  return [
  *       'sitemap' => [
  *           'class' => SitemapBehavior::className(),
+ *           'scope' => function ($model) {
+ *               $model->select(['id', 'updated_at']);
+ *               $model->andWhere(['is_deleted' => 0]);
+ *                 
+ *               return $model;
+ *           },
  *           'dataClosure' => function ($model) {
  *              return [
  *                  'loc' => Url::to($model->url, true),
@@ -51,15 +57,15 @@ class SitemapBehavior extends Behavior
 
     /** @var \Closure $dataClosure */
     public $dataClosure;
-    
-    /** @var string|array $select */
-    public $select = '*';
 
     /** @var string|bool $defaultChangefreq */
     public $defaultChangefreq = false;
 
     /** @var float|bool $defaultPriority */
     public $defaultPriority = false;
+
+    /** @var callable $scope */
+    public $scope;
 
     public function init()
     {
@@ -75,7 +81,11 @@ class SitemapBehavior extends Behavior
 
         /** @var ActiveRecord $owner */
         $owner = $this->owner;
-        $models = $owner::find()->select($this->select)->all();
+        $query = $owner::find();
+        if (is_callable($this->scope)) {
+            call_user_func($this->scope, $query);
+        }
+        $models = $query->all();
 
         foreach ($models as $model) {
             $urlData = call_user_func($this->dataClosure, $model);

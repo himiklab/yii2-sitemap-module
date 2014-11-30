@@ -69,8 +69,8 @@ to the `require` section of your application's `composer.json` file.
                 ],
             ],
         ],
-        'enableGzip' => true,
-        'flush' => false,  // Set flush to true to always flush cache
+        'enableGzip' => true, // default is false
+        'cacheExpire' => 1, // 1 second. Default is 24 hours
     ],
 ],
 ```
@@ -85,10 +85,12 @@ public function behaviors()
     return [
         'sitemap' => [
             'class' => SitemapBehavior::className(),
-            'select' => [
-                'url',
-                'lastmod',
-            ],
+            'scope' => function ($model) {
+                $model->select(['id', 'updated_at']);
+                $model->andWhere(['is_deleted' => 0]);
+
+                return $model;
+            },
             'dataClosure' => function ($model) {
                 /** @var self $model */
                 return [
