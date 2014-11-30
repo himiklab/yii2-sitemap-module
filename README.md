@@ -86,7 +86,8 @@ public function behaviors()
         'sitemap' => [
             'class' => SitemapBehavior::className(),
             'scope' => function ($model) {
-                $model->select(['id', 'updated_at']);
+                /** @var \yii\db\ActiveQuery $model */
+                $model->select(['url', 'lastmod']);
                 $model->andWhere(['is_deleted' => 0]);
 
                 return $model;

@@ -22,10 +22,6 @@ class DefaultController extends Controller
         /** @var \himiklab\sitemap\Sitemap $module */
         $module = $this->module;
 
-        if ($module->flush) {
-            Yii::$app->cache->delete($module->cacheKey);
-        }
-
         if (!$sitemapData = Yii::$app->cache->get($module->cacheKey)) {
             $urls = $this->toUrl($module->urls);
 

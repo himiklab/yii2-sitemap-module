@@ -23,9 +23,9 @@ use yii\base\InvalidParamException;
  *       'sitemap' => [
  *           'class' => SitemapBehavior::className(),
  *           'scope' => function ($model) {
- *               $model->select(['id', 'updated_at']);
+ *               $model->select(['url', 'lastmod']);
  *               $model->andWhere(['is_deleted' => 0]);
- *                 
+ *
  *               return $model;
  *           },
  *           'dataClosure' => function ($model) {
@@ -55,7 +55,7 @@ class SitemapBehavior extends Behavior
     const CHANGEFREQ_YEARLY = 'yearly';
     const CHANGEFREQ_NEVER = 'never';
 
-    /** @var \Closure $dataClosure */
+    /** @var callable $dataClosure */
     public $dataClosure;
 
     /** @var string|bool $defaultChangefreq */
@@ -69,8 +69,8 @@ class SitemapBehavior extends Behavior
 
     public function init()
     {
-        if (!$this->dataClosure instanceof \Closure) {
-            throw new InvalidParamException('SitemapBehavior::$dataClosure isn`t \Closure object.');
+        if (!is_callable($this->dataClosure)) {
+            throw new InvalidParamException('SitemapBehavior::$dataClosure isn`t callable.');
         }
     }
 

@@ -29,9 +29,6 @@ class Sitemap extends Module
     /** @var boolean $enableGzip */
     public $enableGzip = false;
 
-    /** @var boolean $flush */
-    public $flush = false;
-
     /** @var array $models */
     public $models = [];
 
