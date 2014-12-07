@@ -14,9 +14,10 @@ echo '<?xml version="1.0" encoding="UTF-8"?>' . PHP_EOL;
         xmlns:news="http://www.google.com/schemas/sitemap-news/0.9">
     <?php foreach ($urls as $url): ?>
         <url>
-            <loc><?= $url['loc'] ?></loc>
+            <loc><?= yii\helpers\Url::to($url['loc'], true) ?></loc>
             <?php if (isset($url['lastmod'])): ?>
-                <lastmod><?= $url['lastmod'] ?></lastmod>
+                <lastmod><?= is_string($url['lastmod']) ?
+                        $url['lastmod'] : date(DATE_W3C, $url['lastmod']) ?></lastmod>
             <?php endif; ?>
             <?php if (isset($url['changefreq'])): ?>
                 <changefreq><?= $url['changefreq'] ?></changefreq>
@@ -24,43 +25,46 @@ echo '<?xml version="1.0" encoding="UTF-8"?>' . PHP_EOL;
             <?php if (isset($url['priority'])): ?>
                 <priority><?= $url['priority'] ?></priority>
             <?php endif; ?>
-            <?php
-            if (isset($url['news'])) {
-                echo '<news:news>';
-                if (isset($url['news']['publication'])) {
-                    echo '<news:publication>';
-                    echo(isset($url['news']['publication']['name']) ?
-                        '<news:name>' . $url['news']['publication']['name'] . '</news:name>' : '');
-                    echo(isset($url['news']['publication']['language']) ?
-                        '<news:language>' . $url['news']['publication']['language'] . '</news:language>' : '');
-                    echo '</news:publication>';
-                }
-                echo(isset($url['news']['access']) ? '<news:access>' . $url['news']['access'] . '</news:access>' : '');
-                echo(isset($url['news']['genres']) ? '<news:genres>' . $url['news']['genres'] . '</news:genres>' : '');
-                echo(isset($url['news']['publication_date']) ?
-                    '<news:publication_date>' . $url['news']['publication_date'] . '</news:publication_date>' : '');
-                echo(isset($url['news']['title']) ?
-                    '<news:title>' . $url['news']['title'] . '</news:title>' : '');
-                echo(isset($url['news']['keywords']) ?
-                    '<news:keywords>' . $url['news']['keywords'] . '</news:keywords>' : '');
-                echo(isset($url['news']['stock_tickers']) ?
-                    '<news:stock_tickers>' . $url['news']['stock_tickers'] . '</news:stock_tickers>' : '');
-                echo '</news:news>';
-            }
-
-            if (isset($url['images'])) {
-                foreach ($url['images'] as $image) {
-                    echo '<image:image>';
-                    echo(isset($image['loc']) ? '<image:loc>' . $image['loc'] . '</image:loc>' : '');
-                    echo(isset($image['caption']) ? '<image:caption>' . $image['caption'] . '</image:caption>' : '');
-                    echo(isset($image['geo_location']) ?
-                        '<image:geo_location>' . $image['geo_location'] . '</image:geo_location>' : '');
-                    echo(isset($image['title']) ? '<image:title>' . $image['title'] . '</image:title>' : '');
-                    echo(isset($image['license']) ? '<image:license>' . $image['license'] . '</image:license>' : '');
-                    echo '</image:image>';
-                }
-            }
-            ?>
+            <?php if (isset($url['news'])): ?>
+                <news:news>
+                    <news:publication>
+                        <news:name><?= $url['news']['publication']['name'] ?></news:name>
+                        <news:language><?= $url['news']['publication']['language'] ?></news:language>
+                    </news:publication>
+                    <?php
+                    echo isset($url['news']['access']) ? "<news:access>{$url['news']['access']}</news:access>" : '';
+                    echo isset($url['news']['genres']) ? "<news:genres>{$url['news']['genres']}</news:genres>" : '';
+                    ?>
+                    <news:publication_date>
+                        <?= is_string($url['news']['publication_date']) ?
+                            $url['news']['publication_date'] : date(DATE_W3C, $url['news']['publication_date']) ?>
+                    </news:publication_date>
+                    <news:title> <?= $url['news']['title'] ?></news:title>
+                    <?php
+                    echo isset($url['news']['keywords']) ?
+                        "<news:keywords>{$url['news']['keywords']}</news:keywords>" : '';
+                    echo isset($url['news']['stock_tickers']) ?
+                        "<news:stock_tickers>{$url['news']['stock_tickers']}</news:stock_tickers>" : '';
+                    ?>
+                </news:news>
+            <?php endif; ?>
+            <?php if (isset($url['images'])):
+                foreach ($url['images'] as $image): ?>
+                    <image:image>
+                        <image:loc><?= yii\helpers\Url::to($image['loc'], true) ?></image:loc>
+                        <?php
+                        echo isset($image['caption']) ?
+                            "<image:caption>{$image['caption']}</image:caption>" : '';
+                        echo isset($image['geo_location']) ?
+                            "<image:geo_location>{$image['geo_location']}</image:geo_location>" : '';
+                        echo isset($image['title']) ?
+                            "<image:title>{$image['title']}</image:title>" : '';
+                        echo isset($image['license']) ?
+                            "<image:license>{$image['license']}</image:license>" : '';
+                        ?>
+                    </image:image>
+                <?php endforeach;
+            endif; ?>
         </url>
     <?php endforeach; ?>
 </urlset>

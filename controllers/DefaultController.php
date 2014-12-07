@@ -9,7 +9,6 @@ namespace himiklab\sitemap\controllers;
 
 use Yii;
 use yii\web\Controller;
-use yii\helpers\Url;
 
 /**
  * @author HimikLab
@@ -23,8 +22,7 @@ class DefaultController extends Controller
         $module = $this->module;
 
         if (!$sitemapData = Yii::$app->cache->get($module->cacheKey)) {
-            $urls = $this->toUrl($module->urls);
-
+            $urls = $module->urls;
             foreach ($module->models as $modelName) {
                 /** @var \himiklab\sitemap\behaviors\SitemapBehavior $model */
                 $model = new $modelName;
@@ -44,22 +42,5 @@ class DefaultController extends Controller
             header('Content-Length: ' . strlen($sitemapData));
         }
         echo $sitemapData;
-    }
-
-    /**
-     * toUrl function.
-     *
-     * @param array $urls
-     * @return array
-     */
-    protected function toUrl($urls)
-    {
-        $i = 0;
-        foreach ($urls as $u) {
-            $urls[$i]['loc'] = Url::to($u['loc'], true);
-            $i++;
-        }
-
-        return $urls;
     }
 }

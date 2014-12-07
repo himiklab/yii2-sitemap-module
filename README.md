@@ -1,5 +1,5 @@
 XML Sitemap Module for Yii2
-========================
+==========================
 Yii2 module for automatically generating [XML Sitemap](http://www.sitemaps.org/protocol.html).
 
 Installation
@@ -46,7 +46,7 @@ to the `require` section of your application's `composer.json` file.
                 'loc' => '/news/index',
                 'changefreq' => \himiklab\sitemap\behaviors\SitemapBehavior::CHANGEFREQ_DAILY,
                 'priority' => 0.8,
-                'news'          => [
+                'news' => [
                     'publication'   => [
                         'name'          => 'Example Blog',
                         'language'      => 'en',
@@ -89,8 +89,6 @@ public function behaviors()
                 /** @var \yii\db\ActiveQuery $model */
                 $model->select(['url', 'lastmod']);
                 $model->andWhere(['is_deleted' => 0]);
-
-                return $model;
             },
             'dataClosure' => function ($model) {
                 /** @var self $model */
@@ -117,7 +115,7 @@ public function behaviors()
 ```
 
 Resources
-------------
+---------
 * [XML Sitemap](http://www.sitemaps.org/protocol.html)
 
 * [News Sitemap](https://support.google.com/news/publisher/answer/74288?hl=en)

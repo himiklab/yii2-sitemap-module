@@ -8,8 +8,7 @@
 namespace himiklab\sitemap\behaviors;
 
 use yii\base\Behavior;
-use yii\db\ActiveRecord;
-use yii\base\InvalidParamException;
+use yii\base\InvalidConfigException;
 
 /**
  * Behavior for XML Sitemap Yii2 module.
@@ -25,8 +24,6 @@ use yii\base\InvalidParamException;
  *           'scope' => function ($model) {
  *               $model->select(['url', 'lastmod']);
  *               $model->andWhere(['is_deleted' => 0]);
- *
- *               return $model;
  *           },
  *           'dataClosure' => function ($model) {
  *              return [
@@ -55,22 +52,22 @@ class SitemapBehavior extends Behavior
     const CHANGEFREQ_YEARLY = 'yearly';
     const CHANGEFREQ_NEVER = 'never';
 
-    /** @var callable $dataClosure */
+    /** @var callable */
     public $dataClosure;
 
-    /** @var string|bool $defaultChangefreq */
+    /** @var string|bool */
     public $defaultChangefreq = false;
 
-    /** @var float|bool $defaultPriority */
+    /** @var float|bool */
     public $defaultPriority = false;
 
-    /** @var callable $scope */
+    /** @var callable */
     public $scope;
 
     public function init()
     {
         if (!is_callable($this->dataClosure)) {
-            throw new InvalidParamException('SitemapBehavior::$dataClosure isn`t callable.');
+            throw new InvalidConfigException('SitemapBehavior::$dataClosure isn\'t callable.');
         }
     }
 
@@ -79,7 +76,7 @@ class SitemapBehavior extends Behavior
         $result = [];
         $n = 0;
 
-        /** @var ActiveRecord $owner */
+        /** @var \yii\db\ActiveRecord $owner */
         $owner = $this->owner;
         $query = $owner::find();
         if (is_callable($this->scope)) {
@@ -94,14 +91,8 @@ class SitemapBehavior extends Behavior
                 continue;
             }
 
-            if (!isset($urlData['loc'])) {
-                throw new InvalidParamException('Required param `loc` isn`t set.');
-            }
-
             $result[$n]['loc'] = $urlData['loc'];
-            if (isset($urlData['lastmod'])) {
-                $result[$n]['lastmod'] = date(DATE_W3C, $urlData['lastmod']);
-            }
+            $result[$n]['lastmod'] = $urlData['lastmod'];
 
             if (isset($urlData['changefreq'])) {
                 $result[$n]['changefreq'] = $urlData['changefreq'];
@@ -113,6 +104,13 @@ class SitemapBehavior extends Behavior
                 $result[$n]['priority'] = $urlData['priority'];
             } elseif ($this->defaultPriority !== false) {
                 $result[$n]['priority'] = $this->defaultPriority;
+            }
+
+            if (isset($urlData['news'])) {
+                $result[$n]['news'] = $urlData['news'];
+            }
+            if (isset($urlData['images'])) {
+                $result[$n]['images'] = $urlData['images'];
             }
 
             ++$n;

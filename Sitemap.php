@@ -20,18 +20,18 @@ class Sitemap extends Module
 {
     public $controllerNamespace = 'himiklab\sitemap\controllers';
 
-    /** @var int $cacheExpire */
+    /** @var int */
     public $cacheExpire = 86400;
 
-    /** @var string $cacheKey */
+    /** @var string */
     public $cacheKey = 'sitemap';
 
-    /** @var boolean $enableGzip */
+    /** @var boolean */
     public $enableGzip = false;
 
-    /** @var array $models */
+    /** @var array */
     public $models = [];
 
-    /** @var array $urls */
+    /** @var array */
     public $urls = [];
 }
