@@ -22,17 +22,7 @@ class DefaultController extends Controller
         $module = $this->module;
 
         if (!$sitemapData = Yii::$app->cache->get($module->cacheKey)) {
-            $urls = $module->urls;
-            foreach ($module->models as $modelName) {
-                /** @var \himiklab\sitemap\behaviors\SitemapBehavior $model */
-                $model = new $modelName;
-                $urls = array_merge($urls, $model->generateSiteMap());
-            }
-
-            $sitemapData = $this->renderPartial('index', [
-                'urls' => $urls
-            ]);
-            Yii::$app->cache->set($module->cacheKey, $sitemapData, $module->cacheExpire);
+            $sitemapData = $module->buildSitemap();
         }
 
         header('Content-type: application/xml');

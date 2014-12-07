@@ -34,4 +34,26 @@ class Sitemap extends Module
 
     /** @var array */
     public $urls = [];
+
+    /**
+     * Build and cache a site map.
+     * @return string
+     * @throws \yii\base\InvalidConfigException
+     */
+    public function buildSitemap()
+    {
+        $urls = $this->urls;
+        foreach ($this->models as $modelName) {
+            /** @var behaviors\SitemapBehavior $model */
+            $model = new $modelName;
+            $urls = array_merge($urls, $model->generateSiteMap());
+        }
+
+        $sitemapData = $this->createControllerByID('default')->renderPartial('index', [
+            'urls' => $urls
+        ]);
+        Yii::$app->cache->set($this->cacheKey, $sitemapData, $this->cacheExpire);
+
+        return $sitemapData;
+    }
 }
