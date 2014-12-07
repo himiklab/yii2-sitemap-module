@@ -26,7 +26,7 @@ class Sitemap extends Module
     /** @var string */
     public $cacheKey = 'sitemap';
 
-    /** @var boolean */
+    /** @var boolean Use php's gzip compressing. */
     public $enableGzip = false;
 
     /** @var array */

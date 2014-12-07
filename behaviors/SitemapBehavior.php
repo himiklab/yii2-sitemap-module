@@ -52,6 +52,8 @@ class SitemapBehavior extends Behavior
     const CHANGEFREQ_YEARLY = 'yearly';
     const CHANGEFREQ_NEVER = 'never';
 
+    const BATCH_MAX_SIZE = 100;
+
     /** @var callable */
     public $dataClosure;
 
@@ -82,9 +84,8 @@ class SitemapBehavior extends Behavior
         if (is_callable($this->scope)) {
             call_user_func($this->scope, $query);
         }
-        $models = $query->all();
 
-        foreach ($models as $model) {
+        foreach ($query->each(self::BATCH_MAX_SIZE) as $model) {
             $urlData = call_user_func($this->dataClosure, $model);
 
             if (empty($urlData)) {
