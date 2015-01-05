@@ -45,7 +45,15 @@ class Sitemap extends Module
         $urls = $this->urls;
         foreach ($this->models as $modelName) {
             /** @var behaviors\SitemapBehavior $model */
-            $model = new $modelName;
+            if (is_array($modelName)) {
+                $model = new $modelName['class'];
+                if (isset($modelName['behaviors'])) {
+                    $model->attachBehaviors($modelName['behaviors']);
+                }
+            } else {
+                $model = new $modelName;
+            }
+
             $urls = array_merge($urls, $model->generateSiteMap());
         }
 
@@ -57,3 +65,4 @@ class Sitemap extends Module
         return $sitemapData;
     }
 }
+
