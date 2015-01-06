@@ -63,6 +63,12 @@ to the `require` section of your application's `composer.json` file.
                 ],
             ],
         ],
+        'xmlns' => [
+            'xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"',
+            'xmlns:xhtml="http://www.w3.org/TR/xhtml11/xhtml11_schema.html"',
+            'xmlns:image="http://www.google.com/schemas/sitemap-image/1.1"',
+            'xmlns:news="http://www.google.com/schemas/sitemap-news/0.9"',
+        ],
         'urls'=> [
             // your additional urls
             [
@@ -90,6 +96,18 @@ to the `require` section of your application's `composer.json` file.
                         'license'       => 'http://example.com/license',
                     ],
                 ],
+                'xhtml:link' => [
+                    [
+                        'rel' => 'alternate',
+					    'hreflang' => 'ru',
+					    'href' => 'http://example.ru/news',
+				    ],
+                    [
+                        'rel' => 'alternate',
+					    'hreflang' => 'en',
+					    'href' => 'http://example.com/news',
+				    ],
+				];
             ],
         ],
         'enableGzip' => true, // default is false

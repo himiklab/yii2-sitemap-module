@@ -7,11 +7,11 @@
  * @var array $urls
  */
 
+use yii\helpers\Html;
+
 echo '<?xml version="1.0" encoding="UTF-8"?>' . PHP_EOL;
 ?>
-<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
-        xmlns:image="http://www.google.com/schemas/sitemap-image/1.1"
-        xmlns:news="http://www.google.com/schemas/sitemap-news/0.9">
+<urlset <?= implode(' ', $xmlns) ?>>
     <?php foreach ($urls as $url): ?>
         <url>
             <loc><?= yii\helpers\Url::to($url['loc'], true) ?></loc>
@@ -63,6 +63,11 @@ echo '<?xml version="1.0" encoding="UTF-8"?>' . PHP_EOL;
                             "<image:license>{$image['license']}</image:license>" : '';
                         ?>
                     </image:image>
+                <?php endforeach;
+            endif; ?>
+            <?php if (isset($url['xhtml:link'])):
+                foreach ($url['xhtml:link'] as $attributes): ?>
+                    <xhtml:link <?=Html::renderTagAttributes($attributes)?>/>
                 <?php endforeach;
             endif; ?>
         </url>

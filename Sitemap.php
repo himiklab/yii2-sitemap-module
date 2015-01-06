@@ -34,6 +34,14 @@ class Sitemap extends Module
 
     /** @var array */
     public $urls = [];
+    
+    /** @var integer */
+    public $batchSize = 100;
+    
+    /** @var array */
+    public $xmlns = [
+        'xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"',
+    ];
 
     /**
      * Build and cache a site map.
@@ -58,11 +66,11 @@ class Sitemap extends Module
         }
 
         $sitemapData = $this->createControllerByID('default')->renderPartial('index', [
-            'urls' => $urls
+            'urls' => $urls,
+            'xmlns' => $this->xmlns,
         ]);
         Yii::$app->cache->set($this->cacheKey, $sitemapData, $this->cacheExpire);
 
         return $sitemapData;
     }
 }
-

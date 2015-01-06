@@ -7,6 +7,7 @@
 
 namespace himiklab\sitemap\behaviors;
 
+use Yii;
 use yii\base\Behavior;
 use yii\base\InvalidConfigException;
 
@@ -52,8 +53,6 @@ class SitemapBehavior extends Behavior
     const CHANGEFREQ_YEARLY = 'yearly';
     const CHANGEFREQ_NEVER = 'never';
 
-    const BATCH_MAX_SIZE = 100;
-
     /** @var callable */
     public $dataClosure;
 
@@ -76,7 +75,9 @@ class SitemapBehavior extends Behavior
     public function generateSiteMap()
     {
         $result = [];
-        $n = 0;
+        
+        /** @var \himiklab\sitemap\Sitemap $module */
+        $module = Yii::$app->getModule('sitemap');
 
         /** @var \yii\db\ActiveRecord $owner */
         $owner = $this->owner;
@@ -85,37 +86,20 @@ class SitemapBehavior extends Behavior
             call_user_func($this->scope, $query);
         }
 
-        foreach ($query->each(self::BATCH_MAX_SIZE) as $model) {
+        foreach ($query->each($module->batchSize) as $model) {
             $urlData = call_user_func($this->dataClosure, $model);
 
-            if (empty($urlData)) {
-                continue;
+            if (!isset($urlData['changefreq']) && $this->defaultChangefreq !== false) {
+                $urlData['changefreq'] = $this->defaultChangefreq;
             }
 
-            $result[$n]['loc'] = $urlData['loc'];
-            $result[$n]['lastmod'] = $urlData['lastmod'];
-
-            if (isset($urlData['changefreq'])) {
-                $result[$n]['changefreq'] = $urlData['changefreq'];
-            } elseif ($this->defaultChangefreq !== false) {
-                $result[$n]['changefreq'] = $this->defaultChangefreq;
+            if (!isset($urlData['priority']) && $this->defaultPriority !== false) {
+                $urlData['priority'] = $this->defaultPriority;
             }
 
-            if (isset($urlData['priority'])) {
-                $result[$n]['priority'] = $urlData['priority'];
-            } elseif ($this->defaultPriority !== false) {
-                $result[$n]['priority'] = $this->defaultPriority;
-            }
-
-            if (isset($urlData['news'])) {
-                $result[$n]['news'] = $urlData['news'];
-            }
-            if (isset($urlData['images'])) {
-                $result[$n]['images'] = $urlData['images'];
-            }
-
-            ++$n;
+            $result[] = $urlData;
         }
+
         return $result;
     }
 }
