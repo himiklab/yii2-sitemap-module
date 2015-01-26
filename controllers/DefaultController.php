@@ -21,7 +21,7 @@ class DefaultController extends Controller
         /** @var \himiklab\sitemap\Sitemap $module */
         $module = $this->module;
 
-        if (!$sitemapData = Yii::$app->cache->get($module->cacheKey)) {
+        if (!$sitemapData = $module->cacheProvider->get($module->cacheKey)) {
             $sitemapData = $module->buildSitemap();
         }
 

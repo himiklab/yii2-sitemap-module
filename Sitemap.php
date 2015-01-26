@@ -8,7 +8,9 @@
 namespace himiklab\sitemap;
 
 use Yii;
+use yii\base\InvalidConfigException;
 use yii\base\Module;
+use yii\caching\Cache;
 
 /**
  * Yii2 module for automatically generating XML Sitemap.
@@ -23,6 +25,9 @@ class Sitemap extends Module
     /** @var int */
     public $cacheExpire = 86400;
 
+    /** @var Cache|string */
+    public $cacheProvider = 'cache';
+
     /** @var string */
     public $cacheKey = 'sitemap';
 
@@ -34,6 +39,19 @@ class Sitemap extends Module
 
     /** @var array */
     public $urls = [];
+
+    public function init()
+    {
+        parent::init();
+
+        if (is_string($this->cacheProvider)) {
+            $this->cacheProvider = Yii::$app->{$this->cacheProvider};
+        }
+
+        if (!$this->cacheProvider instanceof Cache) {
+            throw new InvalidConfigException('Invalid `cacheKey` parameter was specified.');
+        }
+    }
 
     /**
      * Build and cache a site map.
@@ -60,9 +78,8 @@ class Sitemap extends Module
         $sitemapData = $this->createControllerByID('default')->renderPartial('index', [
             'urls' => $urls
         ]);
-        Yii::$app->cache->set($this->cacheKey, $sitemapData, $this->cacheExpire);
+        $this->cacheProvider->set($this->cacheKey, $sitemapData, $this->cacheExpire);
 
         return $sitemapData;
     }
 }
-
