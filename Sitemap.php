@@ -78,7 +78,6 @@ class Sitemap extends Module
         $sitemapData = $this->createControllerByID('default')->renderPartial('index', [
             'urls' => $urls
         ]);
-        $this->cacheProvider->set($this->cacheKey, $sitemapData, $this->cacheExpire);
 
         return $sitemapData;
     }
