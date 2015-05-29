@@ -25,11 +25,13 @@ class DefaultController extends Controller
             $sitemapData = $module->buildSitemap();
         }
 
-        header('Content-type: application/xml');
+        Yii::$app->response->format = \yii\web\Response::FORMAT_RAW;
+        $headers = Yii::$app->response->headers;
+        $headers->add('Content-Type', 'application/xml');
         if ($module->enableGzip) {
             $sitemapData = gzencode($sitemapData);
-            header('Content-Encoding: gzip');
-            header('Content-Length: ' . strlen($sitemapData));
+            $headers->add('Content-Encoding', 'gzip');
+            $headers->add('Content-Length', strlen($sitemapData));
         }
         echo $sitemapData;
     }
