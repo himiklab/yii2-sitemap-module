@@ -73,7 +73,7 @@ class SitemapBehavior extends Behavior
         }
     }
 
-    public function generateSiteMap()
+    public function generateSiteMap($additionalParameters = array())
     {
         $result = [];
         $n = 0;
@@ -82,11 +82,11 @@ class SitemapBehavior extends Behavior
         $owner = $this->owner;
         $query = $owner::find();
         if (is_callable($this->scope)) {
-            call_user_func($this->scope, $query);
+            call_user_func($this->scope, $query, $additionalParameters);
         }
 
         foreach ($query->each(self::BATCH_MAX_SIZE) as $model) {
-            $urlData = call_user_func($this->dataClosure, $model);
+            $urlData = call_user_func($this->dataClosure, $model, $additionalParameters);
 
             if (empty($urlData)) {
                 continue;
