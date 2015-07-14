@@ -37,31 +37,35 @@ to the `require` section of your application's `composer.json` file.
     'sitemap' => [
         'class' => 'himiklab\sitemap\Sitemap',
         'models' => [
-            // your models
-            'app\modules\news\models\News',
-            // or configuration for creating a behavior
-            [
-                'class' => 'app\modules\news\models\News',
-                'behaviors' => [
-					'sitemap' => [
-						'class' => SitemapBehavior::className(),
-						'scope' => function ($model, $additionalParameters) {
-						    /** @var \yii\db\ActiveQuery $model */
-						    $model->select(['url', 'lastmod']);
-						    $model->andWhere(['is_deleted' => 0]);
-						},
-						'dataClosure' => function ($model, $additionalParameters) {
-						    /** @var self $model */
-						    return [
-                                'loc' => Url::to([$model->url, 'language' => $additionalParameters['language']], true),
-						        'lastmod' => strtotime($model->lastmod),
-						        'changefreq' => SitemapBehavior::CHANGEFREQ_DAILY,
-						        'priority' => 0.8
-						    ];
-						}
-					],
-                ],
+            'main'    => [
+                // your models
+                'app\modules\news\models\News',,
             ],
+            'default' => [
+                // or configuration for creating a behavior
+                [
+                    'class' => 'app\modules\news\models\News',
+                    'behaviors' => [
+                        'sitemap' => [
+                            'class' => SitemapBehavior::className(),
+                            'scope' => function ($model, $additionalParameters) {
+                                /** @var \yii\db\ActiveQuery $model */
+                                $model->select(['url', 'lastmod']);
+                                $model->andWhere(['is_deleted' => 0]);
+                            },
+                            'dataClosure' => function ($model, $additionalParameters) {
+                                /** @var self $model */
+                                return [
+                                    'loc' => Url::to([$model->url, 'language' => $additionalParameters['language']], true),
+                                    'lastmod' => strtotime($model->lastmod),
+                                    'changefreq' => SitemapBehavior::CHANGEFREQ_DAILY,
+                                    'priority' => 0.8
+                                ];
+                            }
+                        ],
+                    ],
+                ]
+            ]
         ],
         'urls'=> [
             // your additional urls
