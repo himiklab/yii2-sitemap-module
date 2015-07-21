@@ -58,10 +58,10 @@ class Sitemap extends Module
      * @return string
      * @throws \yii\base\InvalidConfigException
      */
-    public function buildSitemap($additionalParameters = array(), $subset = 'default', $enclosureType = 'url')
+    public function buildSitemap($additionalParameters = array(), $enclosureType = 'url')
     {
         $urls = $this->urls;
-        foreach ($this->models[$subset] as $modelName) {
+        foreach ($this->models as $modelName) {
             /** @var behaviors\SitemapBehavior $model */
             if (is_array($modelName)) {
                 $model = new $modelName['class'];

@@ -22,8 +22,10 @@ class DefaultController extends Controller
     {
         $request = new Request();
         $request->setUrl(Yii::$app->request->url);
-        $additional_parameters = Yii::$app->urlManager->parseRequest($request);
-        return $additional_parameters[1];
+        $additionalParameters = Yii::$app->urlManager->parseRequest($request);
+
+        $this->module->cacheKey .= serialize($additionalParameters);
+        return $additionalParameters[1];
     }
 
     public function printXml($sitemapData)
@@ -46,7 +48,7 @@ class DefaultController extends Controller
         /** @var \himiklab\sitemap\Sitemap $module */
         $module = $this->module;
         $additionalParameters = $this->getAdditionalParameters();
-        if (!$sitemapData = $module->cacheProvider->get($module->cacheKey.$this->id.serialize($additionalParameters))) {
+        if (!$sitemapData = $module->cacheProvider->get($module->cacheKey)) {
             $sitemapData = $module->buildSitemap($additionalParameters);
         }
 
@@ -59,8 +61,8 @@ class DefaultController extends Controller
         $module = $this->module;
 
         $additionalParameters = $this->getAdditionalParameters();
-        if (!$sitemapData = $module->cacheProvider->get($module->cacheKey.$this->id.serialize($additionalParameters))) {
-            $sitemapData = $module->buildSitemap($this->getAdditionalParameters(), 'main', 'sitemap');
+        if (!$sitemapData = $module->cacheProvider->get($module->cacheKey)) {
+            $sitemapData = $module->buildSitemap($additionalParameters, 'sitemap');
         }
         $this->printXml($sitemapData);
     }
