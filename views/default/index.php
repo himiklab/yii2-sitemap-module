@@ -5,6 +5,7 @@
  * @license http://opensource.org/licenses/MIT MIT
  *
  * @var array $urls
+ *  * @var string $enclosureType
  */
 
 echo '<?xml version="1.0" encoding="UTF-8"?>' . PHP_EOL;
@@ -13,7 +14,7 @@ echo '<?xml version="1.0" encoding="UTF-8"?>' . PHP_EOL;
         xmlns:image="http://www.google.com/schemas/sitemap-image/1.1"
         xmlns:news="http://www.google.com/schemas/sitemap-news/0.9">
     <?php foreach ($urls as $url): ?>
-        <url>
+        <<?php echo $enclosureType ?>>
             <loc><?= yii\helpers\Url::to($url['loc'], true) ?></loc>
             <?php if (isset($url['lastmod'])): ?>
                 <lastmod><?= is_string($url['lastmod']) ?
@@ -65,6 +66,6 @@ echo '<?xml version="1.0" encoding="UTF-8"?>' . PHP_EOL;
                     </image:image>
                 <?php endforeach;
             endif; ?>
-        </url>
+        </<?php echo $enclosureType ?>>
     <?php endforeach; ?>
 </urlset>

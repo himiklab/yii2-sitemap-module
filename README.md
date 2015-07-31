@@ -38,30 +38,30 @@ to the `require` section of your application's `composer.json` file.
         'class' => 'himiklab\sitemap\Sitemap',
         'models' => [
             // your models
-            'app\modules\news\models\News',
+            'app\modules\news\models\News',,
             // or configuration for creating a behavior
             [
                 'class' => 'app\modules\news\models\News',
                 'behaviors' => [
-					'sitemap' => [
-						'class' => SitemapBehavior::className(),
-						'scope' => function ($model) {
-						    /** @var \yii\db\ActiveQuery $model */
-						    $model->select(['url', 'lastmod']);
-						    $model->andWhere(['is_deleted' => 0]);
-						},
-						'dataClosure' => function ($model) {
-						    /** @var self $model */
-						    return [
-						        'loc' => Url::to($model->url, true),
-						        'lastmod' => strtotime($model->lastmod),
-						        'changefreq' => SitemapBehavior::CHANGEFREQ_DAILY,
-						        'priority' => 0.8
-						    ];
-						}
-					],
+                    'sitemap' => [
+                        'class' => SitemapBehavior::className(),
+                        'scope' => function ($model, $additionalParameters) {
+                            /** @var \yii\db\ActiveQuery $model */
+                            $model->select(['url', 'lastmod']);
+                            $model->andWhere(['is_deleted' => 0]);
+                        },
+                        'dataClosure' => function ($model, $additionalParameters) {
+                            /** @var self $model */
+                            return [
+                                'loc' => Url::to([$model->url, 'language' => $additionalParameters['language']], true),
+                                'lastmod' => strtotime($model->lastmod),
+                                'changefreq' => SitemapBehavior::CHANGEFREQ_DAILY,
+                                'priority' => 0.8
+                            ];
+                        }
+                    ],
                 ],
-            ],
+            ]
         ],
         'urls'=> [
             // your additional urls
@@ -108,15 +108,15 @@ public function behaviors()
     return [
         'sitemap' => [
             'class' => SitemapBehavior::className(),
-            'scope' => function ($model) {
+            'scope' => function ($model, $additionalParameters) {
                 /** @var \yii\db\ActiveQuery $model */
                 $model->select(['url', 'lastmod']);
                 $model->andWhere(['is_deleted' => 0]);
             },
-            'dataClosure' => function ($model) {
+            'dataClosure' => function ($model, $additionalParameters) {
                 /** @var self $model */
                 return [
-                    'loc' => Url::to($model->url, true),
+                    'loc' => Url::to([$model->url, 'language' => $additionalParameters['language']], true),
                     'lastmod' => strtotime($model->lastmod),
                     'changefreq' => SitemapBehavior::CHANGEFREQ_DAILY,
                     'priority' => 0.8
@@ -132,7 +132,8 @@ public function behaviors()
 ```php
 'urlManager' => [
     'rules' => [
-        ['pattern' => 'sitemap', 'route' => 'sitemap/default/index', 'suffix' => '.xml'],
+        ['pattern' => 'sitemap', 'route' => 'sitemap/default/main', 'suffix' => '.xml'],
+        ['pattern' => 'sitemaps/sitemap_<language:\w{2,6}>', 'route' => 'sitemap/default/index', 'suffix' => '.xml']
     ],
 ],
 ```

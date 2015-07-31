@@ -58,7 +58,7 @@ class Sitemap extends Module
      * @return string
      * @throws \yii\base\InvalidConfigException
      */
-    public function buildSitemap()
+    public function buildSitemap($additionalParameters = array(), $enclosureType = 'url')
     {
         $urls = $this->urls;
         foreach ($this->models as $modelName) {
@@ -72,11 +72,12 @@ class Sitemap extends Module
                 $model = new $modelName;
             }
 
-            $urls = array_merge($urls, $model->generateSiteMap());
+            $urls = array_merge($urls, $model->generateSiteMap($additionalParameters));
         }
 
         $sitemapData = $this->createControllerByID('default')->renderPartial('index', [
-            'urls' => $urls
+            'urls' => $urls,
+            'enclosureType' => $enclosureType
         ]);
         $this->cacheProvider->set($this->cacheKey, $sitemapData, $this->cacheExpire);
 
