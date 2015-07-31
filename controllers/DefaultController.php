@@ -33,6 +33,6 @@ class DefaultController extends Controller
             $headers->add('Content-Encoding', 'gzip');
             $headers->add('Content-Length', strlen($sitemapData));
         }
-        echo $sitemapData;
+        return $sitemapData;
     }
 }
