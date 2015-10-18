@@ -30,6 +30,8 @@ to the `require` section of your application's `composer.json` file.
 ]
 ```
 
+* Add `use himiklab\sitemap\behaviors\SitemapBehavior;` to the beginning of configuration file
+
 * Add a new module in `modules` section of your application's configuration file, for example:
 
 ```php
