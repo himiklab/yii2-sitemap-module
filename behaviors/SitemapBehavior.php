@@ -93,7 +93,10 @@ class SitemapBehavior extends Behavior
             }
 
             $result[$n]['loc'] = $urlData['loc'];
-            $result[$n]['lastmod'] = $urlData['lastmod'];
+
+            if(!empty($urlData['lastmod'])) {
+                $result[$n]['lastmod'] = $urlData['lastmod'];
+            }
 
             if (isset($urlData['changefreq'])) {
                 $result[$n]['changefreq'] = $urlData['changefreq'];
