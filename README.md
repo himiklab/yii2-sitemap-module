@@ -34,33 +34,13 @@ to the `require` section of your application's `composer.json` file.
 
 ```php
 'modules' => [
-    'sitemap' => [
-        'class' => 'himiklab\sitemap\Sitemap',
-        'models' => [
-            // your models
-            'app\modules\news\models\News',
-            // or configuration for creating a behavior
-            [
-                'class' => 'app\modules\news\models\News',
-                'behaviors' => [
-					'sitemap' => [
-						'class' => SitemapBehavior::className(),
-						'scope' => function ($model) {
-						    /** @var \yii\db\ActiveQuery $model */
-						    $model->select(['url', 'lastmod']);
-						    $model->andWhere(['is_deleted' => 0]);
-						},
-						'dataClosure' => function ($model) {
-						    /** @var self $model */
-						    return [
-						        'loc' => Url::to($model->url, true),
-						        'lastmod' => strtotime($model->lastmod),
-						        'changefreq' => SitemapBehavior::CHANGEFREQ_DAILY,
-						        'priority' => 0.8
-						    ];
-						}
-					],
+        'sitemap' => [
+            'class' => 'himiklab\sitemap\Sitemap',
+            'models' => [
+                'article' => [
+                    'class' => 'common\models\Article',
                 ],
+                'page' => ['']
             ],
         ],
         'urls'=> [
@@ -109,34 +89,59 @@ public function behaviors()
         'sitemap' => [
             'class' => SitemapBehavior::className(),
             'scope' => function ($model) {
-                /** @var \yii\db\ActiveQuery $model */
-                $model->select(['url', 'lastmod']);
-                $model->andWhere(['is_deleted' => 0]);
+                 /** @var \yii\db\ActiveQuery $model */
+                 $model->select(['slug', 'updated_at', 'private', 'title', 'published_at']);
+                 $model->andWhere(['status' => \frontend\modules\api\v1\resources\Article::STATUS_PUBLISHED]);
             },
             'dataClosure' => function ($model) {
                 /** @var self $model */
-                return [
-                    'loc' => Url::to($model->url, true),
-                    'lastmod' => strtotime($model->lastmod),
-                    'changefreq' => SitemapBehavior::CHANGEFREQ_DAILY,
-                    'priority' => 0.8
+                $result = [
+                   'news' => [
+                       'publication' => [
+                           'name' => 'Name',
+                           'language' => Yii::$app->language,
+                   ],
+                   'publication_date' => date('c', $model->published_at),
+                   'title' => $model->title,
+                ],
+                'loc' => Url::to('article/' . $model->slug, true),
+                'lastmod' => strtotime($model->updated_at),
+                'changefreq' => SitemapBehavior::CHANGEFREQ_DAILY,
+                'priority' => 0.8
                 ];
+                if ($model->private != \frontend\modules\api\v1\resources\Article::PRIVATE_OFF) {
+                    $result['news']['access'] = 'Registration';
+                }
+                return $result;
             }
         ],
     ];
 }
 ```
 
-* Add a new rule for `urlManager` of your application's configuration file, for example:
+* Add a new rules for `urlManager` of your application's configuration file, for example:
 
 ```php
 'urlManager' => [
     'rules' => [
-        ['pattern' => 'sitemap', 'route' => 'sitemap/default/index', 'suffix' => '.xml'],
+        ['pattern' => 'sitemap', 'route' => 'sitemap/default/sitemap-index', 'suffix' => '.xml'],
+        [
+            'pattern' => 'sitemap_<name:.+?><delimetr:_+><page:(\d+)>',
+            'route' => 'sitemap/default/sitemap',
+            'defaults' => [
+                'delimetr' => null,
+                'page' => null
+            ],
+            'suffix' => '.xml',
+        ]
     ],
 ],
-```
-
+``` 
+* Sitemap creates by following scheme:
+ sitemap.xml containes SitemapIndex with list of local sitemaps and url's sitemap
+ local sitemaps (for example sitemap_article.xml) contains addresses of articles if number of articles is less
+ than 1 000. If number of articles bigger local sitemap contains addresses of subsitemaps.
+ 
 Resources
 ---------
 * [XML Sitemap](http://www.sitemaps.org/protocol.html)

@@ -20,6 +20,9 @@ use yii\caching\Cache;
  */
 class Sitemap extends Module
 {
+    //About limit - https://support.google.com/webmasters/answer/75712
+    const URLS_ON_PAGE = 1000;
+
     public $controllerNamespace = 'himiklab\sitemap\controllers';
 
     /** @var int */
@@ -58,27 +61,83 @@ class Sitemap extends Module
      * @return string
      * @throws \yii\base\InvalidConfigException
      */
-    public function buildSitemap()
+    public function buildSitemap($name = '', $page = null)
     {
-        $urls = $this->urls;
-        foreach ($this->models as $modelName) {
-            /** @var behaviors\SitemapBehavior $model */
-            if (is_array($modelName)) {
-                $model = new $modelName['class'];
-                if (isset($modelName['behaviors'])) {
-                    $model->attachBehaviors($modelName['behaviors']);
-                }
-            } else {
-                $model = new $modelName;
+        /** @var behaviors\SitemapBehavior $model */
+        if (is_array($this->models)) {
+            $model = new $this->models['class'];
+            if (isset($this->models['behaviors'])) {
+                $model->attachBehaviors($this->models['behaviors']);
             }
-
-            $urls = array_merge($urls, $model->generateSiteMap());
+        } else {
+            $model = new $this->models;
         }
 
+        $sitemapData = $this->generateSitemap($model, $name, $page);
+
+        $this->cacheProvider->set($this->cacheKey . $name . $page ? : '', $sitemapData, $this->cacheExpire);
+
+        return $sitemapData;
+    }
+
+    public function buildSitemapIndex()
+    {
+        $maps = [];
+        if (!empty($this->urls)) {
+            $maps[] = 'urls';
+        }
+        $maps += array_merge($maps, array_keys($this->models));
+
+        foreach ($maps as $item) {
+            $urls[]['loc'] = '/sitemap_' . $item . '.xml';
+        }
         $sitemapData = $this->createControllerByID('default')->renderPartial('index', [
             'urls' => $urls
         ]);
         $this->cacheProvider->set($this->cacheKey, $sitemapData, $this->cacheExpire);
+
+        return $sitemapData;
+    }
+
+    public function buildSitemapUrl($name)
+    {
+        $urls = $this->urls;
+
+        $sitemapData = $this->createControllerByID('default')->renderPartial('sitemap', [
+            'urls' => $urls
+        ]);
+        $this->cacheProvider->set($this->cacheKey, $sitemapData, $this->cacheExpire);
+
+        return $sitemapData;
+    }
+
+    private function generateSitemap($model, $name = '', $page = null)
+    {
+        $countUrls = $model::find()->count();
+        if ($countUrls > self::URLS_ON_PAGE) {
+            if (is_numeric($page) && $page >= 0) {
+                //Create a page of sitemaps
+
+                $urls = $model->generateSiteMap(self::URLS_ON_PAGE, $page);
+                $sitemapData = $this->createControllerByID('default')->renderPartial('sitemap', [
+                    'urls' => $urls
+                ]);
+            } else {
+                //Create common sitemap
+                $pages = floor($countUrls / self::URLS_ON_PAGE);
+                foreach (range(0, $pages) as $index) {
+                    $urls[]['loc'] = '/sitemap_' . $name . '_' . $index . '.xml';
+                }
+                $sitemapData = $this->createControllerByID('default')->renderPartial('index', [
+                    'urls' => $urls
+                ]);
+            }
+        } else {
+            $urls = $model->generateSiteMap();
+            $sitemapData = $this->createControllerByID('default')->renderPartial('sitemap', [
+                'urls' => $urls
+            ]);
+        }
 
         return $sitemapData;
     }
