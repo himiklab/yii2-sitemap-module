@@ -61,7 +61,6 @@ to the `require` section of your application's `composer.json` file.
 						}
 					],
                 ],
-                'page' => ['']
             ],
         ],
         'urls'=> [
