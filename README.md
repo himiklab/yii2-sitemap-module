@@ -34,11 +34,32 @@ to the `require` section of your application's `composer.json` file.
 
 ```php
 'modules' => [
-        'sitemap' => [
-            'class' => 'himiklab\sitemap\Sitemap',
-            'models' => [
-                'article' => [
-                    'class' => 'common\models\Article',
+    'sitemap' => [
+        'class' => 'himiklab\sitemap\Sitemap',
+        'models' => [
+            // your models
+            'news' => 'app\modules\news\models\News',
+            // or configuration for creating a behavior
+            'news' => [
+                'class' => 'app\modules\news\models\News',
+                'behaviors' => [
+					'sitemap' => [
+						'class' => SitemapBehavior::className(),
+						'scope' => function ($model) {
+						    /** @var \yii\db\ActiveQuery $model */
+						    $model->select(['url', 'lastmod']);
+						    $model->andWhere(['is_deleted' => 0]);
+						},
+						'dataClosure' => function ($model) {
+						    /** @var self $model */
+						    return [
+						        'loc' => Url::to($model->url, true),
+						        'lastmod' => strtotime($model->lastmod),
+						        'changefreq' => SitemapBehavior::CHANGEFREQ_DAILY,
+						        'priority' => 0.8
+						    ];
+						}
+					],
                 ],
                 'page' => ['']
             ],
@@ -79,7 +100,6 @@ to the `require` section of your application's `composer.json` file.
 ```
 
 * Add behavior in the AR models, for example:
-
 ```php
 use himiklab\sitemap\behaviors\SitemapBehavior;
 
@@ -89,30 +109,18 @@ public function behaviors()
         'sitemap' => [
             'class' => SitemapBehavior::className(),
             'scope' => function ($model) {
-                 /** @var \yii\db\ActiveQuery $model */
-                 $model->select(['slug', 'updated_at', 'private', 'title', 'published_at']);
-                 $model->andWhere(['status' => \frontend\modules\api\v1\resources\Article::STATUS_PUBLISHED]);
+                /** @var \yii\db\ActiveQuery $model */
+                $model->select(['url', 'lastmod']);
+                $model->andWhere(['is_deleted' => 0]);
             },
             'dataClosure' => function ($model) {
                 /** @var self $model */
-                $result = [
-                   'news' => [
-                       'publication' => [
-                           'name' => 'Name',
-                           'language' => Yii::$app->language,
-                   ],
-                   'publication_date' => date('c', $model->published_at),
-                   'title' => $model->title,
-                ],
-                'loc' => Url::to('article/' . $model->slug, true),
-                'lastmod' => strtotime($model->updated_at),
-                'changefreq' => SitemapBehavior::CHANGEFREQ_DAILY,
-                'priority' => 0.8
+                return [
+                    'loc' => Url::to($model->url, true),
+                    'lastmod' => strtotime($model->lastmod),
+                    'changefreq' => SitemapBehavior::CHANGEFREQ_DAILY,
+                    'priority' => 0.8
                 ];
-                if ($model->private != \frontend\modules\api\v1\resources\Article::PRIVATE_OFF) {
-                    $result['news']['access'] = 'Registration';
-                }
-                return $result;
             }
         ],
     ];
@@ -120,7 +128,6 @@ public function behaviors()
 ```
 
 * Add a new rules for `urlManager` of your application's configuration file, for example:
-
 ```php
 'urlManager' => [
     'rules' => [
@@ -138,9 +145,59 @@ public function behaviors()
 ],
 ``` 
 * Sitemap creates by following scheme:
- sitemap.xml containes SitemapIndex with list of local sitemaps and url's sitemap
- local sitemaps (for example sitemap_article.xml) contains addresses of articles if number of articles is less
- than 1 000. If number of articles bigger local sitemap contains addresses of subsitemaps.
+ sitemap.xml containes SitemapIndex with list of local sitemaps and url's sitemap:
+```html
+<?xml version="1.0" encoding="UTF-8"?>
+<sitemapindex xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
+               xmlns:image="http://www.google.com/schemas/sitemap-image/1.1"
+               xmlns:news="http://www.google.com/schemas/sitemap-news/0.9">
+    <sitemap>
+        <loc>http://localhost/sitemap_urls.xml</loc>
+    </sitemap>
+    <sitemap>
+        <loc>http://localhost/sitemap_news.xml</loc>
+    </sitemap>
+</sitemapindex>
+```
+ local sitemaps (for example sitemap_news.xml) contains addresses of news if number of articles is less than 1 000:
+```html
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
+        xmlns:image="http://www.google.com/schemas/sitemap-image/1.1"
+        xmlns:news="http://www.google.com/schemas/sitemap-news/0.9">
+    <url>
+        <loc>http://localhost/news/first</loc>
+        <lastmod>2016-01-01T00:00:00+00:00</lastmod>
+        <changefreq>daily</changefreq>
+        <priority>0.8</priority>                
+    </url>
+    <url>
+        <loc>http://localhost/news/second</loc>
+        <lastmod>2016-01-11T00:00:00+00:00</lastmod>
+        <changefreq>daily</changefreq>
+        <priority>0.8</priority>
+        <news:news>
+    </url>
+    </urlset>
+```
+
+ If number of articles bigger local sitemap contains addresses of subsitemaps:
+ ```html
+ <?xml version="1.0" encoding="UTF-8"?>
+ <sitemapindex xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
+               xmlns:image="http://www.google.com/schemas/sitemap-image/1.1"
+               xmlns:news="http://www.google.com/schemas/sitemap-news/0.9">
+    <sitemap>
+             <loc>http://localhost/sitemap_news_0.xml</loc>
+    </sitemap>
+    <sitemap>
+             <loc>http://localhost/sitemap_news_1.xml</loc>
+    </sitemap>
+    <sitemap>
+             <loc>http://localhost/sitemap_news_2.xml</loc>
+    </sitemap>
+ </sitemapindex>
+ ```
  
 Resources
 ---------
