@@ -85,7 +85,7 @@ class SitemapBehavior extends Behavior
             call_user_func($this->scope, $query);
         }
 
-        foreach ($query->each(self::BATCH_MAX_SIZE) as $model) {
+        foreach (method_exists($query, 'each') ? $query->each(self::BATCH_MAX_SIZE) : $query->all() as $model) {
             $urlData = call_user_func($this->dataClosure, $model);
 
             if (empty($urlData)) {
