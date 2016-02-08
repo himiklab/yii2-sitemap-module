@@ -40,6 +40,9 @@ class Sitemap extends Module
     /** @var array */
     public $urls = [];
 
+    /** @var array */
+    public $arrays = [];
+
     public function init()
     {
         parent::init();
@@ -61,6 +64,18 @@ class Sitemap extends Module
     public function buildSitemap()
     {
         $urls = $this->urls;
+
+        foreach ($this->arrays as $key => $value) {
+            $arrayUrl = [];
+            if(is_callable($value)) {
+                $arrayUrl = call_user_func($value);
+            }
+            else
+                $arrayUrl = $value;
+
+            $urls = array_merge($urls, $arrayUrl);
+        }
+
         foreach ($this->models as $modelName) {
             /** @var behaviors\SitemapBehavior $model */
             if (is_array($modelName)) {
@@ -74,6 +89,7 @@ class Sitemap extends Module
 
             $urls = array_merge($urls, $model->generateSiteMap());
         }
+
 
         $sitemapData = $this->createControllerByID('default')->renderPartial('index', [
             'urls' => $urls
