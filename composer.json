@@ -1,25 +1,29 @@
 {
-	"name": "himiklab/yii2-sitemap-module",
+	"name": "katech91/yii2-sitemap-module",
 	"description": "Yii2 module for automatically generation XML Sitemap",
 	"keywords": ["yii2", "xml", "sitemap", "module"],
 	"type": "yii2-extension",
 	"license": "MIT",
 	"support": {
-		"source": "https://github.com/himiklab/yii2-sitemap-module",
-        "issues": "https://github.com/himiklab/yii2-sitemap-module/issues"
+		"source": "https://github.com/katech91/yii2-sitemap-module",
+        "issues": "https://github.com/katech91/yii2-sitemap-module/issues"
 	},
 	"authors": [
         {
             "name": "HimikLab",
             "homepage" : "https://github.com/himiklab"
-        }
+        },
+		{
+			"name": "katech91",
+			"homepage" : "https://github.com/katech91"
+		}
 	],
 	"require": {
 		"yiisoft/yii2": "*"
 	},
 	"autoload": {
 		"psr-4": {
-            "himiklab\\sitemap\\": ""
+            "katech91\\sitemap\\": ""
         }
 	}
 }

@@ -5,7 +5,7 @@
  * @license http://opensource.org/licenses/MIT MIT
  */
 
-namespace himiklab\sitemap;
+namespace katech91\sitemap;
 
 use Yii;
 use yii\base\InvalidConfigException;
@@ -16,14 +16,14 @@ use yii\caching\Cache;
  * Yii2 module for automatically generating XML Sitemap.
  *
  * @author HimikLab
- * @package himiklab\sitemap
+ * @package katech91\sitemap
  */
 class Sitemap extends Module
 {
     //About limit - https://support.google.com/webmasters/answer/75712
     const URLS_ON_PAGE = 1000;
 
-    public $controllerNamespace = 'himiklab\sitemap\controllers';
+    public $controllerNamespace = 'katech91\sitemap\controllers';
 
     /** @var int */
     public $cacheExpire = 86400;

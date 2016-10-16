@@ -5,20 +5,20 @@
  * @license http://opensource.org/licenses/MIT MIT
  */
 
-namespace himiklab\sitemap\controllers;
+namespace katech91\sitemap\controllers;
 
 use Yii;
 use yii\web\Controller;
 
 /**
  * @author HimikLab
- * @package himiklab\sitemap
+ * @package katech91\sitemap
  */
 class DefaultController extends Controller
 {
     public function actionSitemapIndex()
     {
-        /** @var \himiklab\sitemap\Sitemap $module */
+        /** @var \katech91\sitemap\Sitemap $module */
         $module = $this->module;
 
         if (!$sitemapData = $module->cacheProvider->get($module->cacheKey)) {
@@ -38,7 +38,7 @@ class DefaultController extends Controller
 
     public function actionSitemap($name, $page = null)
     {
-        /** @var \himiklab\sitemap\Sitemap $module */
+        /** @var \katech91\sitemap\Sitemap $module */
         $module = $this->module;
         if (isset($module->models[$name])){
             $module->models = $module->models[$name];
