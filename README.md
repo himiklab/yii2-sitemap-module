@@ -9,13 +9,13 @@ The preferred way to install this extension is through [composer](http://getcomp
 * Either run
 
 ```
-php composer.phar require --prefer-dist "himiklab/yii2-sitemap-module" "*"
+php composer.phar require --prefer-dist "katech91/yii2-sitemap-module" "*"
 ```
 
 or add
 
 ```json
-"himiklab/yii2-sitemap-module" : "*"
+"katech91/yii2-sitemap-module" : "*"
 ```
 
 to the `require` section of your application's `composer.json` file.
@@ -35,12 +35,12 @@ to the `require` section of your application's `composer.json` file.
 ```php
 'modules' => [
     'sitemap' => [
-        'class' => 'himiklab\sitemap\Sitemap',
+        'class' => 'katech91\sitemap\Sitemap',
         'models' => [
             // your models
-            'app\modules\news\models\News',
+            'news' => 'app\modules\news\models\News',
             // or configuration for creating a behavior
-            [
+            'news' => [
                 'class' => 'app\modules\news\models\News',
                 'behaviors' => [
 					'sitemap' => [
@@ -67,7 +67,7 @@ to the `require` section of your application's `composer.json` file.
             // your additional urls
             [
                 'loc' => '/news/index',
-                'changefreq' => \himiklab\sitemap\behaviors\SitemapBehavior::CHANGEFREQ_DAILY,
+                'changefreq' => \katech91\sitemap\behaviors\SitemapBehavior::CHANGEFREQ_DAILY,
                 'priority' => 0.8,
                 'news' => [
                     'publication'   => [
@@ -99,9 +99,8 @@ to the `require` section of your application's `composer.json` file.
 ```
 
 * Add behavior in the AR models, for example:
-
 ```php
-use himiklab\sitemap\behaviors\SitemapBehavior;
+use katech91\sitemap\behaviors\SitemapBehavior;
 
 public function behaviors()
 {
@@ -127,16 +126,78 @@ public function behaviors()
 }
 ```
 
-* Add a new rule for `urlManager` of your application's configuration file, for example:
-
+* Add a new rules for `urlManager` of your application's configuration file, for example:
 ```php
 'urlManager' => [
     'rules' => [
-        ['pattern' => 'sitemap', 'route' => 'sitemap/default/index', 'suffix' => '.xml'],
+        ['pattern' => 'sitemap', 'route' => 'sitemap/default/sitemap-index', 'suffix' => '.xml'],
+        [
+            'pattern' => 'sitemap_<name:.+?><delimetr:_+><page:(\d+)>',
+            'route' => 'sitemap/default/sitemap',
+            'defaults' => [
+                'delimetr' => null,
+                'page' => null
+            ],
+            'suffix' => '.xml',
+        ]
     ],
 ],
+``` 
+* Sitemap creates by following scheme:
+ sitemap.xml containes SitemapIndex with list of local sitemaps and url's sitemap:
+```html
+<?xml version="1.0" encoding="UTF-8"?>
+<sitemapindex xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
+               xmlns:image="http://www.google.com/schemas/sitemap-image/1.1"
+               xmlns:news="http://www.google.com/schemas/sitemap-news/0.9">
+    <sitemap>
+        <loc>http://localhost/sitemap_urls.xml</loc>
+    </sitemap>
+    <sitemap>
+        <loc>http://localhost/sitemap_news.xml</loc>
+    </sitemap>
+</sitemapindex>
+```
+ local sitemaps (for example sitemap_news.xml) contains addresses of news if number of articles is less than 1 000:
+```html
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
+        xmlns:image="http://www.google.com/schemas/sitemap-image/1.1"
+        xmlns:news="http://www.google.com/schemas/sitemap-news/0.9">
+    <url>
+        <loc>http://localhost/news/first</loc>
+        <lastmod>2016-01-01T00:00:00+00:00</lastmod>
+        <changefreq>daily</changefreq>
+        <priority>0.8</priority>                
+    </url>
+    <url>
+        <loc>http://localhost/news/second</loc>
+        <lastmod>2016-01-11T00:00:00+00:00</lastmod>
+        <changefreq>daily</changefreq>
+        <priority>0.8</priority>
+        <news:news>
+    </url>
+    </urlset>
 ```
 
+ If number of articles bigger local sitemap contains addresses of subsitemaps:
+ ```html
+ <?xml version="1.0" encoding="UTF-8"?>
+ <sitemapindex xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
+               xmlns:image="http://www.google.com/schemas/sitemap-image/1.1"
+               xmlns:news="http://www.google.com/schemas/sitemap-news/0.9">
+    <sitemap>
+             <loc>http://localhost/sitemap_news_0.xml</loc>
+    </sitemap>
+    <sitemap>
+             <loc>http://localhost/sitemap_news_1.xml</loc>
+    </sitemap>
+    <sitemap>
+             <loc>http://localhost/sitemap_news_2.xml</loc>
+    </sitemap>
+ </sitemapindex>
+ ```
+ 
 Resources
 ---------
 * [XML Sitemap](http://www.sitemaps.org/protocol.html)

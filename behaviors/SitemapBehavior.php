@@ -5,7 +5,7 @@
  * @license http://opensource.org/licenses/MIT MIT
  */
 
-namespace himiklab\sitemap\behaviors;
+namespace katech91\sitemap\behaviors;
 
 use yii\base\Behavior;
 use yii\base\InvalidConfigException;
@@ -40,7 +40,7 @@ use yii\base\InvalidConfigException;
  *
  * @see http://www.sitemaps.org/protocol.html
  * @author HimikLab
- * @package himiklab\sitemap
+ * @package katech91\sitemap
  */
 class SitemapBehavior extends Behavior
 {
@@ -73,7 +73,7 @@ class SitemapBehavior extends Behavior
         }
     }
 
-    public function generateSiteMap()
+    public function generateSiteMap($limit = null, $page = null)
     {
         $result = [];
         $n = 0;
@@ -81,6 +81,9 @@ class SitemapBehavior extends Behavior
         /** @var \yii\db\ActiveRecord $owner */
         $owner = $this->owner;
         $query = $owner::find();
+        if(is_numeric($limit) && is_numeric($page) && $limit > 0 && $page >= 0) {
+            $query->limit($limit)->offset( $page*$limit );
+        }
         if (is_callable($this->scope)) {
             call_user_func($this->scope, $query);
         }
