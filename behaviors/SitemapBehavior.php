@@ -86,7 +86,11 @@ class SitemapBehavior extends Behavior
         }
 
         foreach ($query->each(self::BATCH_MAX_SIZE) as $model) {
-            $urlData = call_user_func($this->dataClosure, $model);
+            if(is_array($this->dataClosure)){
+				$urlData = call_user_func($this->owner->{$this->dataClosure[1]}(), $model);
+			}else{
+				$urlData = call_user_func($this->dataClosure, $model);
+			}
 
             if (empty($urlData)) {
                 continue;
