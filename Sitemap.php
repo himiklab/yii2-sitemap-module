@@ -9,8 +9,10 @@ namespace himiklab\sitemap;
 
 use Yii;
 use yii\base\InvalidConfigException;
+use yii\base\InvalidParamException;
 use yii\base\Module;
 use yii\caching\Cache;
+use yii\db\ActiveRecord;
 
 /**
  * Yii2 module for automatically generating XML Sitemap.
@@ -60,12 +62,13 @@ class Sitemap extends Module
      * Build and cache a site map.
      * @return string
      * @throws \yii\base\InvalidConfigException
+     * @throws InvalidParamException
      */
     public function buildSitemap()
     {
         $urls = $this->urls;
         foreach ($this->models as $modelName) {
-            /** @var behaviors\SitemapBehavior $model */
+            /** @var behaviors\SitemapBehavior|ActiveRecord $model */
             if (is_array($modelName)) {
                 $model = new $modelName['class'];
                 if (isset($modelName['behaviors'])) {
@@ -78,14 +81,17 @@ class Sitemap extends Module
             $urls = array_merge($urls, $model->generateSiteMap());
         }
 
-        $sitemapData = $this->createControllerByID('default')->renderPartial('index', [
-            'urls' => $urls
-        ]);
+        $sitemapData = $this->createControllerByID('default')->renderPartial('index', ['urls' => $urls]);
         if ($this->enableGzipedCache) {
             $sitemapData = gzencode($sitemapData);
         }
         $this->cacheProvider->set($this->cacheKey, $sitemapData, $this->cacheExpire);
 
         return $sitemapData;
+    }
+
+    public function clearCache()
+    {
+        $this->cacheProvider->delete($this->cacheKey);
     }
 }

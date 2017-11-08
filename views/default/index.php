@@ -32,12 +32,10 @@ echo '<?xml version="1.0" encoding="UTF-8"?>' . PHP_EOL;
                         <news:language><?= $url['news']['publication']['language'] ?></news:language>
                     </news:publication>
                     <?php
-                    echo isset($url['news']['access']) ? "<news:access>" .
-                        htmlspecialchars($url['news']['access']) .
-                        "</news:access>" : '';
-                    echo isset($url['news']['genres']) ? "<news:genres>" .
-                        htmlspecialchars($url['news']['genres']) .
-                        "</news:genres>" : '';
+                    echo isset($url['news']['access']) ? ('<news:access>' .
+                        htmlspecialchars($url['news']['access']) . '</news:access>') : '';
+                    echo isset($url['news']['genres']) ? ('<news:genres>' .
+                        htmlspecialchars($url['news']['genres']) . '</news:genres>') : '';
                     ?>
                     <news:publication_date>
                         <?= is_string($url['news']['publication_date']) ?
@@ -58,13 +56,14 @@ echo '<?xml version="1.0" encoding="UTF-8"?>' . PHP_EOL;
                         <image:loc><?= htmlspecialchars(yii\helpers\Url::to($image['loc'], true)) ?></image:loc>
                         <?php
                         echo isset($image['caption']) ?
-                            "<image:caption>" . htmlspecialchars($image['caption']) . "</image:caption>" : '';
+                            ('<image:caption>' . htmlspecialchars($image['caption']) . '</image:caption>') : '';
                         echo isset($image['geo_location']) ?
-                            "<image:geo_location>" . htmlspecialchars($image['geo_location']) . "</image:geo_location>" : '';
+                            ('<image:geo_location>' .
+                                htmlspecialchars($image['geo_location']) . '</image:geo_location>') : '';
                         echo isset($image['title']) ?
-                            "<image:title>" . htmlspecialchars($image['title']) . "</image:title>" : '';
+                            ('<image:title>' . htmlspecialchars($image['title']) . '</image:title>') : '';
                         echo isset($image['license']) ?
-                            "<image:license>" . htmlspecialchars($image['license']) . "</image:license>" : '';
+                            ('<image:license>' . htmlspecialchars($image['license']) . '</image:license>') : '';
                         ?>
                     </image:image>
                 <?php endforeach;
