@@ -81,12 +81,22 @@ class SitemapBehavior extends Behavior
         /** @var \yii\db\ActiveRecord $owner */
         $owner = $this->owner;
         $query = $owner::find();
-        if (is_callable($this->scope)) {
-            call_user_func($this->scope, $query);
-        }
+	if(is_array($this->scope)){
+		if (is_callable($this->owner->{$this->scope[1]}())) {
+			call_user_func($this->owner->{$this->scope[1]}(), $query);
+		}
+		}else{
+			if (is_callable($this->scope)) {
+				call_user_func($this->scope, $query);
+			}
+		}
 
         foreach ($query->each(self::BATCH_MAX_SIZE) as $model) {
-            $urlData = call_user_func($this->dataClosure, $model);
+            if(is_array($this->dataClosure)){
+				$urlData = call_user_func($this->owner->{$this->dataClosure[1]}(), $model);
+			}else{
+				$urlData = call_user_func($this->dataClosure, $model);
+			}
 
             if (empty($urlData)) {
                 continue;
