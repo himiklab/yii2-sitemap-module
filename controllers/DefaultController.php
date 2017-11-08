@@ -1,7 +1,7 @@
 <?php
 /**
  * @link https://github.com/himiklab/yii2-sitemap-module
- * @copyright Copyright (c) 2014 HimikLab
+ * @copyright Copyright (c) 2014-2017 HimikLab
  * @license http://opensource.org/licenses/MIT MIT
  */
 
@@ -29,9 +29,13 @@ class DefaultController extends Controller
         $headers = Yii::$app->response->headers;
         $headers->add('Content-Type', 'application/xml');
         if ($module->enableGzip) {
-            $sitemapData = gzencode($sitemapData);
+            if (!$module->enableGzipedCache) {
+                $sitemapData = gzencode($sitemapData);
+            }
             $headers->add('Content-Encoding', 'gzip');
             $headers->add('Content-Length', strlen($sitemapData));
+        } elseif ($module->enableGzipedCache) {
+            $sitemapData = gzdecode($sitemapData);
         }
         return $sitemapData;
     }

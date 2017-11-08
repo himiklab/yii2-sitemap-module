@@ -1,7 +1,7 @@
 <?php
 /**
  * @link https://github.com/himiklab/yii2-sitemap-module
- * @copyright Copyright (c) 2014 HimikLab
+ * @copyright Copyright (c) 2014-2017 HimikLab
  * @license http://opensource.org/licenses/MIT MIT
  */
 
@@ -33,6 +33,9 @@ class Sitemap extends Module
 
     /** @var boolean Use php's gzip compressing. */
     public $enableGzip = false;
+
+    /** @var boolean */
+    public $enableGzipedCache = false;
 
     /** @var array */
     public $models = [];
@@ -78,6 +81,9 @@ class Sitemap extends Module
         $sitemapData = $this->createControllerByID('default')->renderPartial('index', [
             'urls' => $urls
         ]);
+        if ($this->enableGzipedCache) {
+            $sitemapData = gzencode($sitemapData);
+        }
         $this->cacheProvider->set($this->cacheKey, $sitemapData, $this->cacheExpire);
 
         return $sitemapData;
