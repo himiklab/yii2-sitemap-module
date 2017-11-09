@@ -9,10 +9,8 @@ namespace himiklab\sitemap;
 
 use Yii;
 use yii\base\InvalidConfigException;
-use yii\base\InvalidParamException;
 use yii\base\Module;
 use yii\caching\Cache;
-use yii\db\ActiveRecord;
 
 /**
  * Yii2 module for automatically generating XML Sitemap.
@@ -62,13 +60,13 @@ class Sitemap extends Module
      * Build and cache a site map.
      * @return string
      * @throws \yii\base\InvalidConfigException
-     * @throws InvalidParamException
+     * @throws \yii\base\InvalidParamException
      */
     public function buildSitemap()
     {
         $urls = $this->urls;
         foreach ($this->models as $modelName) {
-            /** @var behaviors\SitemapBehavior|ActiveRecord $model */
+            /** @var behaviors\SitemapBehavior|\yii\db\ActiveRecord $model */
             if (is_array($modelName)) {
                 $model = new $modelName['class'];
                 if (isset($modelName['behaviors'])) {
