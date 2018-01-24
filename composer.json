@@ -1,5 +1,5 @@
 {
-	"name": "himiklab/yii2-sitemap-module",
+	"name": "grptx/yii2-sitemap-module",
 	"description": "Yii2 module for automatically generation XML Sitemap",
 	"keywords": ["yii2", "xml", "sitemap", "module"],
 	"type": "yii2-extension",
