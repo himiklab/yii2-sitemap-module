@@ -5,9 +5,13 @@
  * @license http://opensource.org/licenses/MIT MIT
  *
  * @var array $urls
+ * @var string $xlsStyleSheet
  */
 
 echo '<?xml version="1.0" encoding="UTF-8"?>' . PHP_EOL;
+if($xlsStyleSheet) {
+	echo "<?xml-stylesheet type='text/xsl' href='{$xlsStyleSheet}'?>" .PHP_EOL;
+}
 ?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
         xmlns:image="http://www.google.com/schemas/sitemap-image/1.1"

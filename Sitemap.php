@@ -43,6 +43,9 @@ class Sitemap extends Module
     /** @var array */
     public $urls = [];
 
+    /** @var string */
+    public $xlsStyleSheet;
+
     public function init()
     {
         parent::init();
@@ -79,7 +82,7 @@ class Sitemap extends Module
             $urls = array_merge($urls, $model->generateSiteMap());
         }
 
-        $sitemapData = $this->createControllerByID('default')->renderPartial('index', ['urls' => $urls]);
+	    $sitemapData = $this->createControllerByID('default')->renderPartial('index', ['urls' => $urls ,'xlsStyleSheet'=>$this->xlsStyleSheet]);
         if ($this->enableGzipedCache) {
             $sitemapData = gzencode($sitemapData);
         }
