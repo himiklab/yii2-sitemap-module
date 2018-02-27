@@ -2,6 +2,8 @@ XML Sitemap Module for Yii2
 ==========================
 Yii2 module for automatically generating [XML Sitemap](http://www.sitemaps.org/protocol.html).
 
+[![Packagist](https://img.shields.io/packagist/dt/himiklab/yii2-sitemap-module.svg)]() [![Packagist](https://img.shields.io/packagist/v/himiklab/yii2-sitemap-module.svg)]()  [![license](https://img.shields.io/badge/License-MIT-yellow.svg)]()
+
 Installation
 ------------
 The preferred way to install this extension is through [composer](http://getcomposer.org/download/).
