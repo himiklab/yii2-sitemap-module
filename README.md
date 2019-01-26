@@ -60,7 +60,18 @@ to the `require` section of your application's `composer.json` file.
 						        'loc' => Url::to($model->url, true),
 						        'lastmod' => strtotime($model->lastmod),
 						        'changefreq' => SitemapBehavior::CHANGEFREQ_DAILY,
-						        'priority' => 0.8
+						        'priority' => 0.8,
+							'xhtml:link' => [
+								[
+									'hreflang' => 'en',
+									'href' => Url::to(['url_en', true),
+								],
+								[
+									'hreflang' => 'de',
+									'href' => Url::to(['url_de', true),
+								],
+								//...
+							],
 						    ];
 						}
 					],
