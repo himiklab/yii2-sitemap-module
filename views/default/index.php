@@ -25,6 +25,11 @@ echo '<?xml version="1.0" encoding="UTF-8"?>' . PHP_EOL;
             <?php if (isset($url['priority'])): ?>
                 <priority><?= $url['priority'] ?></priority>
             <?php endif; ?>
+            <?php if (isset($url['xhtml:link'])): ?>
+                <?php foreach ($url['xhtml:link'] as $link): ?>
+                     <xhtml:link rel="alternate" hreflang="<?= $link['hreflang'] ?>" href="<?= $link['href'] ?>" />
+                <?php endforeach; ?>
+            <?php endif; ?>
             <?php if (isset($url['news'])): ?>
                 <news:news>
                     <news:publication>
