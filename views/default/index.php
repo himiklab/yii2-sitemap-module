@@ -11,7 +11,8 @@ echo '<?xml version="1.0" encoding="UTF-8"?>' . PHP_EOL;
 ?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
         xmlns:image="http://www.google.com/schemas/sitemap-image/1.1"
-        xmlns:news="http://www.google.com/schemas/sitemap-news/0.9">
+        xmlns:news="http://www.google.com/schemas/sitemap-news/0.9"
+        xmlns:xhtml="http://www.w3.org/1999/xhtml">
     <?php foreach ($urls as $url): ?>
         <url>
             <loc><?= htmlspecialchars(yii\helpers\Url::to($url['loc'], true)) ?></loc>
@@ -24,6 +25,11 @@ echo '<?xml version="1.0" encoding="UTF-8"?>' . PHP_EOL;
             <?php endif; ?>
             <?php if (isset($url['priority'])): ?>
                 <priority><?= $url['priority'] ?></priority>
+            <?php endif; ?>
+            <?php if (isset($url['xhtml:link'])): ?>
+                <?php foreach ($url['xhtml:link'] as $link): ?>
+                     <xhtml:link rel="alternate" hreflang="<?= $link['hreflang'] ?>" href="<?= $link['href'] ?>" />
+                <?php endforeach; ?>
             <?php endif; ?>
             <?php if (isset($url['news'])): ?>
                 <news:news>
