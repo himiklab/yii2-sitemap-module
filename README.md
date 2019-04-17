@@ -83,7 +83,7 @@ to the `require` section of your application's `composer.json` file.
             // your additional urls
             [
                 'loc' => '/news/index',
-                'changefreq' => \himiklab\sitemap\behaviors\SitemapBehavior::CHANGEFREQ_DAILY,
+                'changefreq' => SitemapBehavior::CHANGEFREQ_DAILY,
                 'priority' => 0.8,
                 'news' => [
                     'publication'   => [
