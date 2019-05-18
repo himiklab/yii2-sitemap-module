@@ -44,37 +44,38 @@ to the `require` section of your application's `composer.json` file.
             // your models
             'app\modules\news\models\News',
             // or configuration for creating a behavior
-            [
-                'class' => 'app\modules\news\models\News',
-                'behaviors' => [
-					'sitemap' => [
-						'class' => SitemapBehavior::className(),
-						'scope' => function ($model) {
-						    /** @var \yii\db\ActiveQuery $model */
-						    $model->select(['url', 'lastmod']);
-						    $model->andWhere(['is_deleted' => 0]);
-						},
-						'dataClosure' => function ($model) {
-						    /** @var self $model */
-						    return [
-						        'loc' => Url::to($model->url, true),
-						        'lastmod' => strtotime($model->lastmod),
-						        'changefreq' => SitemapBehavior::CHANGEFREQ_DAILY,
-						        'priority' => 0.8,
-							'xhtml:link' => [
-								[
-									'hreflang' => 'en',
-									'href' => Url::to(['url_en', true),
-								],
-								[
-									'hreflang' => 'de',
-									'href' => Url::to(['url_de', true),
-								],
-								//...
-							],
-						    ];
-						}
-					],
+                [
+                    'class' => 'app\modules\news\models\News',
+                    'behaviors' => [
+                        'sitemap' => [
+                            'class' => SitemapBehavior::className(),
+                            'scope' => function ($model) {
+                                /** @var \yii\db\ActiveQuery $model */
+                                $model->select(['url', 'lastmod']);
+                                $model->andWhere(['is_deleted' => 0]);
+                            },
+                            'dataClosure' => function ($model) {
+                                /** @var self $model */
+                                return [
+                                    'loc' => Url::to($model->url, true),
+                                    'lastmod' => strtotime($model->lastmod),
+                                    'changefreq' => SitemapBehavior::CHANGEFREQ_DAILY,
+                                    'priority' => 0.8,
+                                    'xhtml:link' => [
+                                        [
+                                            'hreflang' => 'en',
+                                            'href' => Url::to(['url_en'], true),
+                                        ],
+                                        [
+                                            'hreflang' => 'de',
+                                            'href' => Url::to(['url_de'], true),
+                                        ],
+                                        //...
+                                    ],
+                                ];
+                            }
+                        ],
+                    ],
                 ],
             ],
         ],
@@ -82,7 +83,7 @@ to the `require` section of your application's `composer.json` file.
             // your additional urls
             [
                 'loc' => '/news/index',
-                'changefreq' => \himiklab\sitemap\behaviors\SitemapBehavior::CHANGEFREQ_DAILY,
+                'changefreq' => SitemapBehavior::CHANGEFREQ_DAILY,
                 'priority' => 0.8,
                 'news' => [
                     'publication'   => [
